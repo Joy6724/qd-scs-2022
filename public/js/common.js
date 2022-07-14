@@ -1,7 +1,6 @@
 // 全局配置
 const config = {
-  domain: 'http://101.201.153.220:2022',
-  // domain: 'http://cs.tus-street.com:6724',
+  domain: 'http://' + window.location.host,
   roadMap: {
     index: '/search',
     login: '/bg/login',
