@@ -78,17 +78,18 @@ function loadData() {
           //     ${htmlTableBody}
           //   </tbody>
           // </table>
+
+          // <div class="col-4 text-center">
+          //   <span>赛道排名：</span>
+          //   <span>${data.preliminaryContest.industryRanking}</span>
+          // </div>
           const html = `
-          <div class="row mt-3">
-            <div class="col text-center">
+          <div class="row justify-content-center mt-3">
+            <div class="col-4 text-center">
               <span>平均分：</span>
-              <span>${data.preliminaryContest.finalScore.toFixed(1)}</span>
+              <span>${data.preliminaryContest.finalScore}</span>
             </div>
-            <div class="col text-center">
-              <span>赛道排名：</span>
-              <span>${data.preliminaryContest.industryRanking}</span>
-            </div>
-            <div class="col text-center">
+            <div class="col-4 text-center">
               <span>晋级结果：</span>
               <span>${data.preliminaryContest.promotionResult}</span>
             </div>
@@ -104,7 +105,7 @@ function loadData() {
         //       <tr>
         //         <th scope="row">${index + 1}</th>
         //         <td>${grade.name}</td>
-        //         <td>${+grade.value.toFixed(1)}</td>
+        //         <td>${+grade.value}</td>
         //       </tr>
         //     `
         //   })
@@ -124,7 +125,7 @@ function loadData() {
         //     <div class="row mt-3">
         //       <div class="col text-center">
         //         <span>最后得分：</span>
-        //         <span>${data.semifinalsContest.finalScore.toFixed(1)}</span>
+        //         <span>${data.semifinalsContest.finalScore}</span>
         //       </div>
         //       <div class="col text-center">
         //         <span>名次：</span>
@@ -142,7 +143,7 @@ function loadData() {
         //       <tr>
         //         <th scope="row">${index + 1}</th>
         //         <td>${grade.name}</td>
-        //         <td>${+grade.value.toFixed(1)}</td>
+        //         <td>${+grade.value}</td>
         //       </tr>
         //     `
         //   })
@@ -162,7 +163,7 @@ function loadData() {
         //     <div class="row mt-3">
         //       <div class="col text-center">
         //         <span>最后得分：</span>
-        //         <span>${data.finalsContest.finalScore.toFixed(1)}</span>
+        //         <span>${data.finalsContest.finalScore}</span>
         //       </div>
         //       <div class="col text-center">
         //         <span>名次：</span>

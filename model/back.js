@@ -67,6 +67,7 @@ module.exports = {
       const file = ctx.request.files.file // 获取上传文件
       const fileBuffer = fs.readFileSync(file.path)
       const dataObj = {}
+      const errorRows = []
       const workbook = new Excel.Workbook()
       await workbook.xlsx.load(fileBuffer)
       workbook.eachSheet(worksheet => {
@@ -74,9 +75,30 @@ module.exports = {
         if (worksheet.name === '初赛成绩表') {
           for (let i = 2; i <= rowCount; i++) {
             const rowData = worksheet.getRow(i).values
+            const errorMessage = []
             // console.log(rowData)
-            if (rowData.length && rowData[2]) {
-              // let finalScore = 0
+            if (rowData.length) {
+              if (!rowData[2]) {
+                errorMessage.push('缺少项目ID')
+              }
+              if (!rowData[5]) {
+                errorMessage.push('缺少项目名称')
+              }
+              if (!rowData[6]) {
+                errorMessage.push('缺少企业/团队名称')
+              }
+              if (!rowData[7]) {
+                errorMessage.push('缺少负责人姓名')
+              }
+              if (!rowData[8]) {
+                errorMessage.push('缺少负责人手机号')
+              }
+              if (errorMessage.length) {
+                errorRows.push({ message: '第' + i + '行，' + errorMessage.join(',') + '。', rowData })
+                continue
+              }
+
+              let finalScore = 0
               // const grades = [
               //   {
               //     name: rowData[9].toString(),
@@ -130,8 +152,6 @@ module.exports = {
               //   }
               // ]
 
-              const grades = [rowData[9], rowData[10], rowData[11], rowData[12], rowData[13]]
-
               // if (typeof rowData[18] === 'object') {
               //   rowData[18] = rowData[18].result || '-'
               // }
@@ -142,20 +162,33 @@ module.exports = {
               //   }
               // })
 
+              const grades = [
+                (+rowData[9]).toFixed(1) || 0,
+                (+rowData[10]).toFixed(1) || 0,
+                (+rowData[11]).toFixed(1) || 0,
+                (+rowData[12]).toFixed(1) || 0,
+                (+rowData[13]).toFixed(1) || 0
+              ]
+              if (typeof rowData[14] === 'object') {
+                finalScore = rowData[14].result ? (+rowData[14].result).toFixed(1) : '-'
+              } else {
+                finalScore = rowData[14] ? (+rowData[14]).toFixed(1) : '-'
+              }
+
               dataObj[rowData[2]] = {
-                no: rowData[1], // 序号
+                no: rowData[1] || '', // 序号
                 id: rowData[2].toString(), // 项目ID
-                industry: rowData[3].toString(), // 赛道
-                groupType: rowData[4].toString(), // 组别
-                projectName: rowData[5].toString(), // 项目名称
-                groupName: rowData[6].toString(), // 企业/团队名称
-                directorName: rowData[7].toString(), // 负责人姓名
-                directorMobile: rowData[8].toString(), // 负责人手机号
+                industry: (rowData[3] && rowData[3].toString()) || '-', // 赛道
+                groupType: (rowData[4] && rowData[4].toString()) || '-', // 组别
+                projectName: (rowData[5] && rowData[5].toString()) || '-', // 项目名称
+                groupName: (rowData[6] && rowData[6].toString()) || '-', // 企业/团队名称
+                directorName: (rowData[7] && rowData[7].toString()) || '-', // 负责人姓名
+                directorMobile: (rowData[8] && rowData[8].toString()) || '-', // 负责人手机号
                 preliminaryContest: {
                   grades, // 评分列表
-                  finalScore: (typeof rowData[14] === 'object') ? rowData[14].result || 0 : rowData[14], // 平均分
-                  industryRanking: rowData[15].toString(), // 赛道排名
-                  promotionResult: rowData[16].toString() // 晋级结果
+                  finalScore, // 平均分
+                  industryRanking: (rowData[15] && rowData[15].toString()) || '-', // 赛道排名
+                  promotionResult: (rowData[16] && rowData[16].toString()) || '-' // 晋级结果
                 }
               }
             }
@@ -249,7 +282,10 @@ module.exports = {
 
         fs.writeFileSync(path.join(__dirname, '../data/data.json'), JSON.stringify(dataObj), { encoding: 'utf8' })
       })
-      ctx.body = returnConfig.default
+      ctx.body = {
+        ...returnConfig.default,
+        errorRows
+      }
     } catch (error) {
       console.error(error)
       ctx.body = returnConfig.serviceError

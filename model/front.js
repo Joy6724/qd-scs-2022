@@ -2,11 +2,15 @@
 
 const fs = require('fs')
 const path = require('path')
+const querystring = require('querystring')
 const { returnConfig } = require('../config/index')
 
 module.exports = {
   getResult: async (ctx) => {
     const data = ctx.query || {}
+    for (const key in data) {
+      data[key] = querystring.unescape(data[key])
+    }
     const {
       groupName, // 企业/团队名称 模糊查询
       projectName, // 项目名称 模糊查询

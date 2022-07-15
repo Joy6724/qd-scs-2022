@@ -12,7 +12,7 @@ function queryResultList () {
 
         // 渲染数据
         res.data.forEach(function (item) {
-          str += '<tr><th scope="row">' + item.id + '</th><td>' + item.groupType + '</td><td>' + item.projectName + '</td><td>' + item.preliminaryContest.finalScore.toFixed(1) + '</td><td>' + item.preliminaryContest.industryRanking + '</td><td>' + item.preliminaryContest.promotionResult + '</td></tr>'
+          str += '<tr><th scope="row">' + item.id + '</th><td>' + item.groupType + '</td><td>' + item.projectName + '</td><td>' + item.preliminaryContest.finalScore + '</td><td>' + item.preliminaryContest.industryRanking + '</td><td>' + item.preliminaryContest.promotionResult + '</td></tr>'
         })
 
         const $list = $('#list')
@@ -36,6 +36,7 @@ function queryResultList () {
 function uploadFile (data, callback) {
   hideResult()
   showLoading()
+  $('#error').remove()
 
   const formData = new FormData()
 
@@ -52,6 +53,20 @@ function uploadFile (data, callback) {
     success: function (res) {
       if (res.code === 0) {
         setResult('success', '上传成功')
+        if (res.errorRows && res.errorRows.length) {
+          let errorHtml = []
+
+          res.errorRows.forEach(row => {
+            errorHtml.push(`<p>${row.message}</p>`)
+          })
+          $('#table').after(`
+            <div class="alert alert-success" role="alert" id="error">
+              <h4 class="alert-heading">数据错误信息</h4>
+              ${errorHtml.join('\n<hr>\n')}
+              <hr>
+            </div>
+          `)
+        }
       } else {
         setResult('error', res.message)
       }
