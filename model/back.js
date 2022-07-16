@@ -163,16 +163,16 @@ module.exports = {
               // })
 
               const grades = [
-                (+rowData[9]).toFixed(1) || 0,
-                (+rowData[10]).toFixed(1) || 0,
-                (+rowData[11]).toFixed(1) || 0,
-                (+rowData[12]).toFixed(1) || 0,
-                (+rowData[13]).toFixed(1) || 0
+                (+rowData[9]).toFixed(1) || '',
+                (+rowData[10]).toFixed(1) || '',
+                (+rowData[11]).toFixed(1) || '',
+                (+rowData[12]).toFixed(1) || '',
+                (+rowData[13]).toFixed(1) || ''
               ]
               if (typeof rowData[14] === 'object') {
-                finalScore = rowData[14].result ? (+rowData[14].result).toFixed(1) : '-'
+                finalScore = rowData[14].result ? (+rowData[14].result).toFixed(1) : ''
               } else {
-                finalScore = rowData[14] ? (+rowData[14]).toFixed(1) : '-'
+                finalScore = rowData[14] ? (+rowData[14]).toFixed(1) : ''
               }
 
               dataObj[rowData[2]] = {
