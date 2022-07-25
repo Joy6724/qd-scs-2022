@@ -73,7 +73,7 @@ function uploadFile(data, callback) {
           res.errorRows.forEach(row => {
             errorHtml.push(`<p>${row.message}</p>`)
           })
-          $('#table').after(`
+          $('#error-box').html(`
             <div class="alert alert-success" role="alert" id="error">
               <h4 class="alert-heading">数据错误信息</h4>
               ${errorHtml.join('\n<hr>\n')}

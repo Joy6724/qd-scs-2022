@@ -94,7 +94,7 @@ module.exports = {
                 errorMessage.push('缺少负责人手机号')
               }
               if (errorMessage.length) {
-                errorRows.push({ message: '第' + i + '行，' + errorMessage.join(',') + '。', rowData })
+                errorRows.push({ message: '初赛成绩表：第' + i + '行，' + errorMessage.join(',') + '。', rowData })
                 continue
               }
 
@@ -204,20 +204,11 @@ module.exports = {
               if (!rowData[2]) {
                 errorMessage.push('缺少项目ID')
               }
-              if (!rowData[5]) {
-                errorMessage.push('缺少项目名称')
-              }
-              if (!rowData[6]) {
-                errorMessage.push('缺少企业/团队名称')
-              }
-              if (!rowData[7]) {
-                errorMessage.push('缺少负责人姓名')
-              }
-              if (!rowData[8]) {
-                errorMessage.push('缺少负责人手机号')
+              if (!Object.keys(dataObj).includes(rowData[2])) {
+                errorMessage.push('未关联到项目信息')
               }
               if (errorMessage.length) {
-                errorRows.push({ message: '第' + i + '行，' + errorMessage.join(',') + '。', rowData })
+                errorRows.push({ message: '复赛成绩表：第' + i + '行，' + errorMessage.join(',') + '。', rowData })
                 continue
               }
 
@@ -261,20 +252,11 @@ module.exports = {
               if (!rowData[2]) {
                 errorMessage.push('缺少项目ID')
               }
-              if (!rowData[5]) {
-                errorMessage.push('缺少项目名称')
-              }
-              if (!rowData[6]) {
-                errorMessage.push('缺少企业/团队名称')
-              }
-              if (!rowData[7]) {
-                errorMessage.push('缺少负责人姓名')
-              }
-              if (!rowData[8]) {
-                errorMessage.push('缺少负责人手机号')
+              if (!Object.keys(dataObj).includes(rowData[2])) {
+                errorMessage.push('未关联到项目信息')
               }
               if (errorMessage.length) {
-                errorRows.push({ message: '第' + i + '行，' + errorMessage.join(',') + '。', rowData })
+                errorRows.push({ message: '决赛成绩表：第' + i + '行，' + errorMessage.join(',') + '。', rowData })
                 continue
               }
 
