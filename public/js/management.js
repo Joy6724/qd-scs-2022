@@ -1,5 +1,5 @@
 // 请求成绩结果列表
-function queryResultList () {
+function queryResultList() {
   showLoading()
 
   $.ajax({
@@ -8,17 +8,31 @@ function queryResultList () {
     dataType: 'json',
     success: function (res) {
       if (res.code === 0) {
-        let str = ''
+        let str1 = ''
+        let str2 = ''
+        let str3 = ''
 
         // 渲染数据
         res.data.forEach(function (item) {
-          str += '<tr><th scope="row">' + item.id + '</th><td>' + item.groupType + '</td><td>' + item.projectName + '</td><td>' + item.preliminaryContest.finalScore + '</td><td>' + item.preliminaryContest.industryRanking + '</td><td>' + item.preliminaryContest.promotionResult + '</td></tr>'
+          str1 += '<tr><th scope="row">' + item.id + '</th><td>' + item.groupType + '</td><td>' + item.projectName + '</td><td>' + item.preliminaryContest.finalScore + '</td><td>' + item.preliminaryContest.industryRanking + '</td><td>' + item.preliminaryContest.promotionResult + '</td></tr>'
+          if (item.hasOwnProperty('semifinalsContest')) {
+            str2 += '<tr><th scope="row">' + item.id + '</th><td>' + item.groupType + '</td><td>' + item.projectName + '</td><td>' + item.semifinalsContest.finalScore + '</td><td>' + item.semifinalsContest.industryRanking + '</td><td>' + item.semifinalsContest.promotionResult + '</td></tr>'
+          }
+          if (item.hasOwnProperty('finalsContest')) {
+            str3 += '<tr><th scope="row">' + item.id + '</th><td>' + item.groupType + '</td><td>' + item.projectName + '</td><td>' + item.finalsContest.finalScore + '</td><td>' + item.finalsContest.industryRanking + '</td><td>' + item.finalsContest.promotionResult + '</td></tr>'
+          }
         })
 
-        const $list = $('#list')
+        const $list1 = $('#list1')
+        const $list2 = $('#list2')
+        const $list3 = $('#list3')
 
-        $list.children().remove() // 清空表格已有内容
-        $list.append(str)
+        $list1.children().remove() // 清空表格已有内容
+        $list1.append(str1)
+        $list2.children().remove() // 清空表格已有内容
+        $list2.append(str2)
+        $list3.children().remove() // 清空表格已有内容
+        $list3.append(str3)
       } else {
         setResult('error', res.message)
       }
@@ -33,7 +47,7 @@ function queryResultList () {
 }
 
 // 导入文件
-function uploadFile (data, callback) {
+function uploadFile(data, callback) {
   hideResult()
   showLoading()
   $('#error').remove()
@@ -83,7 +97,7 @@ function uploadFile (data, callback) {
   })
 }
 
-;(function () {
+; (function () {
   queryResultList()
 
   $('#importTrigger').on('change', function () {
@@ -91,7 +105,7 @@ function uploadFile (data, callback) {
      * 上传完成后的回调函数
      * 清空上传按钮选中的值
      */
-    function callback () {
+    function callback() {
       this.value = ''
     }
 

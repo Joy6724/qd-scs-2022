@@ -54,7 +54,7 @@ function loadData() {
         })
 
         if (data.preliminaryContest) {
-          let htmlTableBody = ''
+          // let htmlTableBody = ''
           // data.preliminaryContest.grades && data.preliminaryContest.grades.forEach((grade, index) => {
           //   htmlTableBody += `
           //     <tr>
@@ -98,81 +98,82 @@ function loadData() {
           $('#preliminaryContest').html(html)
         }
 
-        // if (data.semifinalsContest) {
-        //   let htmlTableBody = ''
-        //   data.semifinalsContest.grades && data.semifinalsContest.grades.forEach((grade, index) => {
-        //     htmlTableBody += `
-        //       <tr>
-        //         <th scope="row">${index + 1}</th>
-        //         <td>${grade.name}</td>
-        //         <td>${+grade.value}</td>
-        //       </tr>
-        //     `
-        //   })
-        //   const html = `
-        //     <table class="table table-striped">
-        //       <thead>
-        //         <tr>
-        //           <th scope="col">#</th>
-        //           <th scope="col">评委</th>
-        //           <th scope="col">打分</th>
-        //         </tr>
-        //       </thead>
-        //       <tbody>
-        //         ${htmlTableBody}
-        //       </tbody>
-        //     </table>
-        //     <div class="row mt-3">
-        //       <div class="col text-center">
-        //         <span>最后得分：</span>
-        //         <span>${data.semifinalsContest.finalScore}</span>
-        //       </div>
-        //       <div class="col text-center">
-        //         <span>名次：</span>
-        //         <span>${data.semifinalsContest.ranking}</span>
-        //       </div>
-        //     </div>
-        //   `
-        //   $('#semifinalsContest').html(html)
-        // }
+        if (data.semifinalsContest) {
+          // let htmlTableBody = ''
+          // data.semifinalsContest.grades && data.semifinalsContest.grades.forEach((grade, index) => {
+          //   htmlTableBody += `
+          //     <tr>
+          //       <th scope="row">${index + 1}</th>
+          //       <td>${grade.name}</td>
+          //       <td>${+grade.value}</td>
+          //     </tr>
+          //   `
+          // })
 
-        // if (data.finalsContest) {
-        //   let htmlTableBody = ''
-        //   data.finalsContest.grades && data.finalsContest.grades.forEach((grade, index) => {
-        //     htmlTableBody += `
-        //       <tr>
-        //         <th scope="row">${index + 1}</th>
-        //         <td>${grade.name}</td>
-        //         <td>${+grade.value}</td>
-        //       </tr>
-        //     `
-        //   })
-        //   const html = `
-        //     <table class="table table-striped">
-        //       <thead>
-        //         <tr>
-        //           <th scope="col">#</th>
-        //           <th scope="col">评委</th>
-        //           <th scope="col">打分</th>
-        //         </tr>
-        //       </thead>
-        //       <tbody>
-        //         ${htmlTableBody}
-        //       </tbody>
-        //     </table>
-        //     <div class="row mt-3">
-        //       <div class="col text-center">
-        //         <span>最后得分：</span>
-        //         <span>${data.finalsContest.finalScore}</span>
-        //       </div>
-        //       <div class="col text-center">
-        //         <span>名次：</span>
-        //         <span>${data.finalsContest.ranking}</span>
-        //       </div>
-        //     </div>
-        //   `
-        //   $('#finalsContest').html(html)
-        // }
+          // <table class="table table-striped">
+          //   <thead>
+          //     <tr>
+          //       <th scope="col">#</th>
+          //       <th scope="col">评委</th>
+          //       <th scope="col">打分</th>
+          //     </tr>
+          //   </thead>
+          //   <tbody>
+          //     ${htmlTableBody}
+          //   </tbody>
+          // </table>
+          const html = `
+            <div class="row justify-content-center mt-3">
+              <div class="col-4 text-center">
+                <span>平均分：</span>
+                <span>${data.semifinalsContest.finalScore}</span>
+              </div>
+              <div class="col-4 text-center">
+                <span>晋级结果：</span>
+                <span>${data.semifinalsContest.promotionResult}</span>
+              </div>
+            </div>
+          `
+          $('#semifinalsContest').html(html)
+        }
+
+        if (data.finalsContest) {
+          // let htmlTableBody = ''
+          // data.finalsContest.grades && data.finalsContest.grades.forEach((grade, index) => {
+          //   htmlTableBody += `
+          //     <tr>
+          //       <th scope="row">${index + 1}</th>
+          //       <td>${grade.name}</td>
+          //       <td>${+grade.value}</td>
+          //     </tr>
+          //   `
+          // })
+          // <table class="table table-striped">
+          //   <thead>
+          //     <tr>
+          //       <th scope="col">#</th>
+          //       <th scope="col">评委</th>
+          //       <th scope="col">打分</th>
+          //     </tr>
+          //   </thead>
+          //   <tbody>
+          //     ${htmlTableBody}
+          //   </tbody>
+          // </table>
+          const html = `
+            <div class="row justify-content-center mt-3">
+              <div class="col-4 text-center">
+                <span>平均分：</span>
+                <span>${data.finalsContest.finalScore}</span>
+              </div>
+              <div class="col-4 text-center">
+                <span>奖项：</span>
+                <span>${data.finalsContest.promotionResult}</span>
+              </div>
+            </div>
+          `
+          $('#finalsContest').html(html)
+        }
 
         hideLoading()
       } else {

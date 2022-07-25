@@ -195,90 +195,120 @@ module.exports = {
           }
         }
 
-        // if (worksheet.name === '复赛成绩表') {
-        //   for (let i = 2; i <= rowCount; i++) {
-        //     const rowData = worksheet.getRow(i).values
-        //     console.log(rowData)
-        //     if (dataObj[rowData[2]] && rowData.length) {
-        //       if (typeof rowData[13] === 'object') {
-        //         rowData[13] = +rowData[13].result || '-'
-        //       }
-        //       dataObj[rowData[2]].semifinalsContest = {
-        //         grades: [
-        //           {
-        //             name: rowData[3].toString(),
-        //             value: rowData[4]
-        //           },
-        //           {
-        //             name: rowData[5].toString(),
-        //             value: rowData[6]
-        //           },
-        //           {
-        //             name: rowData[7].toString(),
-        //             value: rowData[8]
-        //           },
-        //           {
-        //             name: rowData[9].toString(),
-        //             value: rowData[10]
-        //           },
-        //           {
-        //             name: rowData[11].toString(),
-        //             value: rowData[12]
-        //           }
-        //         ],
-        //         finalScore: rowData[13],
-        //         ranking: rowData[14].toString()
-        //       }
-        //     }
-        //   }
-        // }
+        if (worksheet.name === '复赛成绩表') {
+          for (let i = 2; i <= rowCount; i++) {
+            const rowData = worksheet.getRow(i).values
+            const errorMessage = []
+            // console.log(rowData)
+            if (rowData.length) {
+              if (!rowData[2]) {
+                errorMessage.push('缺少项目ID')
+              }
+              if (!rowData[5]) {
+                errorMessage.push('缺少项目名称')
+              }
+              if (!rowData[6]) {
+                errorMessage.push('缺少企业/团队名称')
+              }
+              if (!rowData[7]) {
+                errorMessage.push('缺少负责人姓名')
+              }
+              if (!rowData[8]) {
+                errorMessage.push('缺少负责人手机号')
+              }
+              if (errorMessage.length) {
+                errorRows.push({ message: '第' + i + '行，' + errorMessage.join(',') + '。', rowData })
+                continue
+              }
 
-        // if (worksheet.name === '决赛成绩表') {
-        //   for (let i = 2; i <= rowCount; i++) {
-        //     const rowData = worksheet.getRow(i).values
-        //     console.log(rowData)
-        //     if (dataObj[rowData[2]] && rowData.length) {
-        //       if (typeof rowData[17] === 'object') {
-        //         rowData[17] = +rowData[17].result || '-'
-        //       }
-        //       dataObj[rowData[2]].finalsContest = {
-        //         grades: [
-        //           {
-        //             name: rowData[3].toString(),
-        //             value: rowData[4]
-        //           },
-        //           {
-        //             name: rowData[5].toString(),
-        //             value: rowData[6]
-        //           },
-        //           {
-        //             name: rowData[7].toString(),
-        //             value: rowData[8]
-        //           },
-        //           {
-        //             name: rowData[9].toString(),
-        //             value: rowData[10]
-        //           },
-        //           {
-        //             name: rowData[11].toString(),
-        //             value: rowData[12]
-        //           },
-        //           {
-        //             name: rowData[13].toString(),
-        //             value: rowData[14]
-        //           },
-        //           {
-        //             name: rowData[15].toString(),
-        //             value: rowData[16]
-        //           }
-        //         ],
-        //         finalScore: rowData[17],
-        //         ranking: rowData[18].toString()
-        //       }
-        //       dataObj[rowData[2]].prize = rowData[19].toString()
-        //     }
-        //   }
-        // }
+              let finalScore = 0
+              let industryRanking = 0
+
+              const grades = [
+                (+rowData[9]).toFixed(1) || '',
+                (+rowData[10]).toFixed(1) || '',
+                (+rowData[11]).toFixed(1) || '',
+                (+rowData[12]).toFixed(1) || '',
+                (+rowData[13]).toFixed(1) || ''
+              ]
+              if (typeof rowData[14] === 'object') {
+                finalScore = rowData[14].result ? (+rowData[14].result).toFixed(1) : ''
+              } else {
+                finalScore = rowData[14] ? (+rowData[14]).toFixed(1) : ''
+              }
+              if (typeof rowData[15] === 'object') {
+                industryRanking = rowData[15].result ? (+rowData[15].result).toFixed(1) : ''
+              } else {
+                industryRanking = rowData[15] ? (+rowData[15]).toFixed(1) : ''
+              }
+
+              dataObj[rowData[2]].semifinalsContest = {
+                grades, // 评分列表
+                finalScore, // 平均分
+                industryRanking, // 赛道排名
+                promotionResult: (rowData[16] && rowData[16].toString()) || '-' // 晋级结果
+              }
+            }
+          }
+        }
+
+        if (worksheet.name === '决赛成绩表') {
+          for (let i = 2; i <= rowCount; i++) {
+            const rowData = worksheet.getRow(i).values
+            const errorMessage = []
+            // console.log(rowData)
+            if (rowData.length) {
+              if (!rowData[2]) {
+                errorMessage.push('缺少项目ID')
+              }
+              if (!rowData[5]) {
+                errorMessage.push('缺少项目名称')
+              }
+              if (!rowData[6]) {
+                errorMessage.push('缺少企业/团队名称')
+              }
+              if (!rowData[7]) {
+                errorMessage.push('缺少负责人姓名')
+              }
+              if (!rowData[8]) {
+                errorMessage.push('缺少负责人手机号')
+              }
+              if (errorMessage.length) {
+                errorRows.push({ message: '第' + i + '行，' + errorMessage.join(',') + '。', rowData })
+                continue
+              }
+
+              let finalScore = 0
+              let industryRanking = 0
+
+              const grades = [
+                (+rowData[9]).toFixed(1) || '',
+                (+rowData[10]).toFixed(1) || '',
+                (+rowData[11]).toFixed(1) || '',
+                (+rowData[12]).toFixed(1) || '',
+                (+rowData[13]).toFixed(1) || ''
+              ]
+              if (typeof rowData[14] === 'object') {
+                finalScore = rowData[14].result ? (+rowData[14].result).toFixed(1) : ''
+              } else {
+                finalScore = rowData[14] ? (+rowData[14]).toFixed(1) : ''
+              }
+              if (typeof rowData[15] === 'object') {
+                industryRanking = rowData[15].result ? (+rowData[15].result).toFixed(1) : ''
+              } else {
+                industryRanking = rowData[15] ? (+rowData[15]).toFixed(1) : ''
+              }
+
+              dataObj[rowData[2]].finalsContest = {
+                grades, // 评分列表
+                finalScore, // 平均分
+                industryRanking, // 赛道排名
+                promotionResult: (rowData[16] && rowData[16].toString()) || '-' // 晋级结果
+              }
+              dataObj[rowData[2]].prize = dataObj[rowData[2]].finalsContest.promotionResult
+            }
+          }
+        }
 
         fs.writeFileSync(path.join(__dirname, '../data/data.json'), JSON.stringify(dataObj), { encoding: 'utf8' })
       })
