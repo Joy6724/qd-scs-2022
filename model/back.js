@@ -264,18 +264,18 @@ module.exports = {
               let industryRanking = 0
 
               const grades = [
-                (+rowData[9]).toFixed(1) || '',
-                (+rowData[10]).toFixed(1) || '',
-                (+rowData[11]).toFixed(1) || '',
-                (+rowData[12]).toFixed(1) || '',
-                (+rowData[13]).toFixed(1) || '',
-                (+rowData[14]).toFixed(1) || '',
-                (+rowData[15]).toFixed(1) || ''
+                (+rowData[9]).toFixed(2) || '',
+                (+rowData[10]).toFixed(2) || '',
+                (+rowData[11]).toFixed(2) || '',
+                (+rowData[12]).toFixed(2) || '',
+                (+rowData[13]).toFixed(2) || '',
+                (+rowData[14]).toFixed(2) || '',
+                (+rowData[15]).toFixed(2) || ''
               ]
               if (typeof rowData[16] === 'object') {
-                finalScore = rowData[16].result ? (+rowData[16].result).toFixed(1) : ''
+                finalScore = rowData[16].result ? (+rowData[16].result).toFixed(2) : ''
               } else {
-                finalScore = rowData[16] ? (+rowData[16]).toFixed(1) : ''
+                finalScore = rowData[16] ? (+rowData[16]).toFixed(2) : ''
               }
               if (typeof rowData[17] === 'object') {
                 industryRanking = rowData[17].result ? (+rowData[17].result) : ''
