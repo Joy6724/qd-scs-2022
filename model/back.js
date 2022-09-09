@@ -228,9 +228,9 @@ module.exports = {
                 finalScore = rowData[14] ? (+rowData[14]).toFixed(1) : ''
               }
               if (typeof rowData[15] === 'object') {
-                industryRanking = rowData[15].result ? (+rowData[15].result).toFixed(1) : ''
+                industryRanking = rowData[15].result ? (+rowData[15].result) : ''
               } else {
-                industryRanking = rowData[15] ? (+rowData[15]).toFixed(1) : ''
+                industryRanking = rowData[15] ? (+rowData[15]) : ''
               }
 
               dataObj[rowData[2]].semifinalsContest = {
@@ -268,24 +268,26 @@ module.exports = {
                 (+rowData[10]).toFixed(1) || '',
                 (+rowData[11]).toFixed(1) || '',
                 (+rowData[12]).toFixed(1) || '',
-                (+rowData[13]).toFixed(1) || ''
+                (+rowData[13]).toFixed(1) || '',
+                (+rowData[14]).toFixed(1) || '',
+                (+rowData[15]).toFixed(1) || ''
               ]
-              if (typeof rowData[14] === 'object') {
-                finalScore = rowData[14].result ? (+rowData[14].result).toFixed(1) : ''
+              if (typeof rowData[16] === 'object') {
+                finalScore = rowData[16].result ? (+rowData[16].result).toFixed(1) : ''
               } else {
-                finalScore = rowData[14] ? (+rowData[14]).toFixed(1) : ''
+                finalScore = rowData[16] ? (+rowData[16]).toFixed(1) : ''
               }
-              if (typeof rowData[15] === 'object') {
-                industryRanking = rowData[15].result ? (+rowData[15].result).toFixed(1) : ''
+              if (typeof rowData[17] === 'object') {
+                industryRanking = rowData[17].result ? (+rowData[17].result) : ''
               } else {
-                industryRanking = rowData[15] ? (+rowData[15]).toFixed(1) : ''
+                industryRanking = rowData[17] ? (+rowData[17]) : ''
               }
 
               dataObj[rowData[2]].finalsContest = {
                 grades, // 评分列表
                 finalScore, // 平均分
                 industryRanking, // 赛道排名
-                promotionResult: (rowData[16] && rowData[16].toString()) || '-' // 晋级结果
+                promotionResult: (rowData[18] && rowData[18].toString()) || '-' // 晋级结果
               }
               dataObj[rowData[2]].prize = dataObj[rowData[2]].finalsContest.promotionResult
             }
