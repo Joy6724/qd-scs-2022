@@ -11,6 +11,4 @@ frontRouter.get('/search', front.searchPage)
 
 frontRouter.get('/result', front.resultPage)
 
-frontRouter.get('/', front.searchPage)
-
 module.exports = frontRouter
