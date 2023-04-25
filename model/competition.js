@@ -10,36 +10,43 @@ const { compare } = require('../utils/index')
 module.exports = {
   // 获取赛事列表
   getCompetitionList: async (ctx) => {
+    const resultList = []
     try {
-      const resultList = []
+      fs.accessSync(path.join(__dirname, '../data/competition.json'), fs.constants.F_OK)
+    } catch (error) {
+      console.log(error)
+      console.log('get: competition.json不存在')
+      return false
+    }
+    try {
       let dataObj = fs.readFileSync(path.join(__dirname, '../data/competition.json'), { encoding: 'utf8' })
 
-      dataObj = dataObj && JSON.parse(dataObj)
+      dataObj = dataObj ? JSON.parse(dataObj) : {}
 
-      if (dataObj && dataObj.competitionList && dataObj.competitionList.length) {
+      if (dataObj.competitionList && Array.isArray(dataObj.competitionList) && dataObj.competitionList.length) {
         dataObj.competitionList.sort(compare('competitionId'))
-      } else {
-        dataObj = {}
-        dataObj.competitionList = []
-      }
-
-      dataObj.competitionList && dataObj.competitionList.length && dataObj.competitionList.forEach(item => {
-        if (item.state > 0) {
-          if (item.hasDiffGroup) {
-            item.industries && item.industries.length && item.industries.forEach((item2, index2) => {
+        dataObj.competitionList.forEach(item => {
+          if (item.state > 0) {
+            if (item.hasDiffGroup) {
+              item.industries && item.industries.length && item.industries.forEach((item2, index2) => {
+                resultList.push({
+                  ...item,
+                  industry: {
+                    index: index2,
+                    name: item2.name,
+                    rubric: []
+                  }
+                })
+              })
+            } else {
               resultList.push({
                 ...item,
-                industry: {
-                  index: index2,
-                  name: item2.name
-                }
+                rubric: []
               })
-            })
-          } else {
-            resultList.push(item)
+            }
           }
-        }
-      })
+        })
+      }
 
       ctx.body = {
         ...returnConfig.default,
@@ -57,17 +64,24 @@ module.exports = {
   // 添加赛事
   addCompetition: async (ctx) => {
     try {
+      fs.accessSync(path.join(__dirname, '../data/competition.json'), fs.constants.F_OK)
+    } catch (error) {
+      console.log(error)
+      console.log('add: competition.json不存在')
+      fs.writeFileSync(path.join(__dirname, '../data/competition.json'), JSON.stringify({}), { encoding: 'utf8' })
+    }
+    try {
       const competitionNew = ctx.request.body
       const resultList = []
+
       let dataObj = fs.readFileSync(path.join(__dirname, '../data/competition.json'), { encoding: 'utf8' })
 
-      dataObj = dataObj && JSON.parse(dataObj)
+      dataObj = dataObj ? JSON.parse(dataObj) : {}
 
-      if (dataObj && dataObj.competitionList && dataObj.competitionList.length) {
+      if (dataObj.competitionList && Array.isArray(dataObj.competitionList) && dataObj.competitionList.length) {
         dataObj.competitionList.sort(compare('competitionId'))
         competitionNew.competitionId = dataObj.competitionList[dataObj.competitionList.length - 1].competitionId + 1
       } else {
-        dataObj = {}
         dataObj.competitionList = []
         competitionNew.competitionId = 1
       }
@@ -110,39 +124,46 @@ module.exports = {
   // 删除赛事
   deleteCompetition: async (ctx) => {
     try {
+      fs.accessSync(path.join(__dirname, '../data/competition.json'), fs.constants.F_OK)
+    } catch (error) {
+      console.log(error)
+      console.log('delete: competition.json不存在')
+      ctx.body = {
+        ...returnConfig.serviceError
+      }
+      return false
+    }
+    try {
       const competitionId = +ctx.params.id
       const resultList = []
+
       let dataObj = fs.readFileSync(path.join(__dirname, '../data/competition.json'), { encoding: 'utf8' })
 
-      dataObj = dataObj && JSON.parse(dataObj)
+      dataObj = dataObj ? JSON.parse(dataObj) : {}
 
-      if (dataObj && dataObj.competitionList && dataObj.competitionList.length) {
+      if (dataObj.competitionList && Array.isArray(dataObj.competitionList) && dataObj.competitionList.length) {
         dataObj.competitionList.sort(compare('competitionId'))
-      } else {
-        dataObj = {}
-        dataObj.competitionList = []
-      }
-
-      dataObj.competitionList && dataObj.competitionList.length && dataObj.competitionList.forEach(item => {
-        if (item.competitionId === competitionId) {
-          item.state = -1
-        }
-        if (item.state > 0) {
-          if (item.hasDiffGroup) {
-            item.industries && item.industries.length && item.industries.forEach((item2, index2) => {
-              resultList.push({
-                ...item,
-                industry: {
-                  index: index2,
-                  name: item2.name
-                }
-              })
-            })
-          } else {
-            resultList.push(item)
+        dataObj.competitionList.forEach(item => {
+          if (item.competitionId === competitionId) {
+            item.state = -1
           }
-        }
-      })
+          if (item.state > 0) {
+            if (item.hasDiffGroup) {
+              item.industries && item.industries.length && item.industries.forEach((item2, index2) => {
+                resultList.push({
+                  ...item,
+                  industry: {
+                    index: index2,
+                    name: item2.name
+                  }
+                })
+              })
+            } else {
+              resultList.push(item)
+            }
+          }
+        })
+      }
 
       fs.writeFileSync(path.join(__dirname, '../data/competition.json'), JSON.stringify(dataObj), { encoding: 'utf8' })
       ctx.body = {
@@ -272,17 +293,29 @@ module.exports = {
     const judgeList = []
 
     try {
+      fs.accessSync(path.join(__dirname, `../data/competition_${pathId}.json`), fs.constants.F_OK)
+    } catch (error) {
+      console.log(error)
+      console.log(`get: competition_${pathId}.json不存在`)
+      ctx.body = {
+        ...returnConfig.default,
+        data: {}
+      }
+      return false
+    }
+
+    try {
       let dataObj = fs.readFileSync(path.join(__dirname, `../data/competition_${pathId}.json`), { encoding: 'utf8' })
 
-      dataObj = dataObj && JSON.parse(dataObj)
+      dataObj = dataObj ? JSON.parse(dataObj) : {}
 
-      if (dataObj && dataObj.project) {
+      if (dataObj.project) {
         for (const key in dataObj.project) {
           const dataItem = dataObj.project[key]
           projectList.push(dataItem)
         }
       }
-      if (dataObj && dataObj.judge) {
+      if (dataObj.judge) {
         for (const key in dataObj.judge) {
           const dataItem = dataObj.judge[key]
           judgeList.push(dataItem)
@@ -309,8 +342,11 @@ module.exports = {
     const pathId = ctx.params.id
     const projectList = []
 
-    fs.access(path.join(__dirname, `../data/competition_${pathId}.json`), fs.constants.F_OK, (err) => {
-      console.log(err)
+    try {
+      fs.accessSync(path.join(__dirname, `../data/competition_${pathId}.json`), fs.constants.F_OK)
+    } catch (error) {
+      console.log(error)
+      console.log(`get: competition_${pathId}.json不存在`)
       ctx.body = {
         ...returnConfig.default,
         data: {
@@ -318,19 +354,20 @@ module.exports = {
         }
       }
       return false
-    })
+    }
+
     let dataObj = fs.readFileSync(path.join(__dirname, `../data/competition_${pathId}.json`), { encoding: 'utf8' })
 
-    dataObj = dataObj && JSON.parse(dataObj)
+    dataObj = dataObj ? JSON.parse(dataObj) : {}
 
-    if (dataObj && dataObj.project) {
+    if (dataObj.project) {
       for (const key in dataObj.project) {
         const dataItem = dataObj.project[key]
         let finalScore = 0
         dataItem.score && dataItem.score.forEach(itemScore => {
           finalScore += itemScore.score
         })
-        dataItem.finalScore = (finalScore / dataItem.score.length).toFixed(2)
+        dataItem.finalScore = finalScore ? (finalScore / dataItem.score.length).toFixed(2) : '-'
         projectList.push(dataItem)
       }
     }
@@ -356,34 +393,60 @@ module.exports = {
     }
 
     try {
-      let dataObj = fs.readFileSync(path.join(__dirname, '../data/competition.json'), { encoding: 'utf8' })
-      let flag = false
-
-      dataObj = dataObj && JSON.parse(dataObj)
-
-      if (dataObj && dataObj.competitionList && dataObj.competitionList.length) {
-        dataObj.competitionList.sort(compare('competitionId'))
-      } else {
-        dataObj = {}
-        dataObj.competitionList = []
+      fs.accessSync(path.join(__dirname, '../data/competition.json'), fs.constants.F_OK)
+    } catch (error) {
+      console.log(error)
+      console.log('get: competition.json不存在')
+      ctx.body = {
+        ...returnConfig.serviceError
       }
+      return false
+    }
 
-      dataObj.competitionList.forEach(item => {
-        if (item.competitionId === competitionId) {
-          flag = true
-          if (industryIndex > -1) {
-            ctx.body = {
-              ...returnConfig.default,
-              data: item.industries[industryIndex].rubric
-            }
-          } else {
-            ctx.body = {
-              ...returnConfig.default,
-              data: item.rubric
+    try {
+      let flag = false
+      let dataObj = fs.readFileSync(path.join(__dirname, '../data/competition.json'), { encoding: 'utf8' })
+
+      dataObj = dataObj ? JSON.parse(dataObj) : {}
+
+      if (dataObj.competitionList && Array.isArray(dataObj.competitionList) && dataObj.competitionList.length) {
+        dataObj.competitionList.sort(compare('competitionId'))
+        dataObj.competitionList.forEach(item => {
+          if (item.competitionId === competitionId) {
+            flag = true
+            if (industryIndex > -1) {
+              ctx.body = {
+                ...returnConfig.default,
+                data: item.industries[industryIndex].rubric || [
+                  {
+                    label: '',
+                    description: '',
+                    hasChildren: false,
+                    children: [],
+                    maxScore: 0,
+                    minScore: 0
+                  }
+                ]
+              }
+            } else {
+              ctx.body = {
+                ...returnConfig.default,
+                data: item.rubric || [
+                  {
+                    label: '',
+                    description: '',
+                    hasChildren: false,
+                    children: [],
+                    maxScore: 0,
+                    minScore: 0
+                  }
+                ]
+              }
             }
           }
-        }
-      })
+        })
+      }
+
       if (!flag) {
         ctx.body = {
           ...returnConfig.notFound
@@ -411,25 +474,46 @@ module.exports = {
     }
 
     try {
+      fs.accessSync(path.join(__dirname, '../data/competition.json'), fs.constants.F_OK)
+    } catch (error) {
+      console.log(error)
+      console.log('get: competition.json不存在')
+      ctx.body = {
+        ...returnConfig.serviceError
+      }
+      return false
+    }
+
+    try {
+      let flag = false
       let dataObj = fs.readFileSync(path.join(__dirname, '../data/competition.json'), { encoding: 'utf8' })
 
-      dataObj = dataObj && JSON.parse(dataObj)
+      dataObj = dataObj ? JSON.parse(dataObj) : {}
 
-      dataObj.competitionList.sort(compare('competitionId'))
-      dataObj.competitionList.forEach(item => {
-        if (item.competitionId === competitionId) {
-          if (industryIndex > -1) {
-            item.industries[industryIndex].rubric = rubric
-          } else {
-            item.rubric = rubric
+      if (dataObj.competitionList && Array.isArray(dataObj.competitionList) && dataObj.competitionList.length) {
+        dataObj.competitionList.sort(compare('competitionId'))
+        dataObj.competitionList.forEach(item => {
+          if (item.competitionId === competitionId) {
+            flag = true
+            if (industryIndex > -1) {
+              item.industries[industryIndex].rubric = rubric
+            } else {
+              item.rubric = rubric
+            }
           }
+        })
+
+        fs.writeFileSync(path.join(__dirname, '../data/competition.json'), JSON.stringify(dataObj), { encoding: 'utf8' })
+
+        ctx.body = {
+          ...returnConfig.default
         }
-      })
+      }
 
-      fs.writeFileSync(path.join(__dirname, '../data/competition.json'), JSON.stringify(dataObj), { encoding: 'utf8' })
-
-      ctx.body = {
-        ...returnConfig.default
+      if (!flag) {
+        ctx.body = {
+          ...returnConfig.notFound
+        }
       }
     } catch (error) {
       console.log(error)
@@ -458,9 +542,20 @@ module.exports = {
     })
 
     try {
+      fs.accessSync(path.join(__dirname, `../data/competition_${competitionId}.json`), fs.constants.F_OK)
+    } catch (error) {
+      console.log(error)
+      console.log(`get: competition_${competitionId}.json不存在`)
+      ctx.body = {
+        ...returnConfig.serviceError
+      }
+      return false
+    }
+
+    try {
       let dataObj = fs.readFileSync(path.join(__dirname, `../data/competition_${competitionId}.json`), { encoding: 'utf8' })
 
-      dataObj = dataObj && JSON.parse(dataObj)
+      dataObj = dataObj ? JSON.parse(dataObj) : {}
 
       if (dataObj && dataObj.project) {
         for (const key in dataObj.project) {
@@ -503,20 +598,24 @@ module.exports = {
 
   // 导出成绩列表
   exportResult: async (ctx) => {
-    const pathId = ctx.params.id
+    const competitionId = ctx.params.id
     const projectList = []
     let judgeCount = 1
 
-    fs.access(path.join(__dirname, `../data/competition_${pathId}.json`), fs.constants.F_OK, (err) => {
-      console.log(err)
+    try {
+      fs.accessSync(path.join(__dirname, `../data/competition_${competitionId}.json`), fs.constants.F_OK)
+    } catch (error) {
+      console.log(error)
+      console.log(`get: competition_${competitionId}.json不存在`)
       ctx.body = {
         ...returnConfig.serviceError
       }
       return false
-    })
-    let dataObj = fs.readFileSync(path.join(__dirname, `../data/competition_${pathId}.json`), { encoding: 'utf8' })
+    }
 
-    dataObj = dataObj && JSON.parse(dataObj)
+    let dataObj = fs.readFileSync(path.join(__dirname, `../data/competition_${competitionId}.json`), { encoding: 'utf8' })
+
+    dataObj = dataObj ? JSON.parse(dataObj) : {}
     judgeCount = dataObj && dataObj.judge && Object.keys(dataObj.judge).length
 
     if (dataObj && dataObj.project) {
@@ -528,7 +627,7 @@ module.exports = {
           finalScore += itemScore.score
           dataItem['judge_' + indexScore] = itemScore.score
         })
-        dataItem.finalScore = (finalScore / dataItem.score.length).toFixed(2)
+        dataItem.finalScore = finalScore ? (finalScore / dataItem.score.length).toFixed(2) : '-'
 
         projectList.push(dataItem)
       }
