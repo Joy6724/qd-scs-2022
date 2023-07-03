@@ -18,7 +18,7 @@ app.keys = config.appKeys
 app.use(server(path.join(__dirname, '/public')))
 
 app.use(async (ctx, next) => {
-  ctx.set('Access-Control-Allow-Origin', 'http://localhost:2023')
+  ctx.set('Access-Control-Allow-Origin', 'http://101.201.153.220:2023')
   ctx.set('Access-Control-Allow-Headers', 'Content-Type')
   ctx.set('Access-Control-Allow-Methods', 'OPTIONS, GET, PUT, POST, DELETE')
   await next()
